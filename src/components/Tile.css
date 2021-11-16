@@ -1,0 +1,15 @@
+.tile {
+    height: min(10vh, 10vw);
+    width: min(10vh, 10vw);
+    font-size: small;
+}
+
+.light-tile {
+    background-color: #f0d9b5;
+    color: #b58863;
+}
+
+.dark-tile {
+    background-color: #b58863;
+    color: #f0d9b5;
+}
