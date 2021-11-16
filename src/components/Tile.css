@@ -13,3 +13,10 @@
     background-color: #b58863;
     color: #f0d9b5;
 }
+
+.piece {
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}

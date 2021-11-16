@@ -4,13 +4,13 @@
 }
 
 .navbar-brand-custom {
-    color: #f0d9b5;
+    color: #b58863;
     font-weight: bold;
     font-size: large;
 }
 
 .navbar-brand-custom:hover {
-    color: #b58863;
+    color: #f0d9b5;
 }
 
 .logo-custom {

@@ -1,9 +1,7 @@
 import React from 'react';
 import './Chessboard.css';
 import Tile from './Tile';
-
-const xAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
-const yAxis = ["8", "7", "6", "5", "4", "3", "2", "1"];
+import { xAxis, yAxis } from '../constants/constants';
 
 class Chessboard extends React.Component {
     render() { 
