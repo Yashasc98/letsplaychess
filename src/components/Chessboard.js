@@ -76,12 +76,40 @@ class Chessboard extends React.Component {
         if(this.state.grabbedPiece){
             const grabbedPiece = this.state.grabbedPiece;
             grabbedPiece.target.style.position = "static";
-            e.target.parentNode.removeChild(e.target);
-            document.elementFromPoint(e.clientX, e.clientY).appendChild(grabbedPiece.target);
+            
+            let destinationSquare = document.elementFromPoint(e.clientX, e.clientY);
+            let destinationContainsPiece = false;
+            if(destinationSquare.classList.contains("piece")){
+                destinationContainsPiece = true;
+                destinationSquare = destinationSquare.parentNode;
+            }
+
+            if(destinationSquare !== e.target && this.validDropSquare(destinationSquare)){
+                if(destinationContainsPiece){
+                    destinationSquare.removeChild(destinationSquare.firstChild);
+                    destinationSquare.appendChild(grabbedPiece.target);
+                }else{
+                    e.target.parentNode.removeChild(e.target);
+                    destinationSquare.appendChild(grabbedPiece.target);
+                }
+            }
+
             this.setState({
                 grabbedPiece: null
             })
         }
+    }
+
+    validDropSquare(destinationSquare) {
+        if(destinationSquare.classList.contains("tile")){
+            if(destinationSquare.firstChild && destinationSquare.firstChild.classList.contains("piece")){
+                console.log(destinationSquare.firstChild); //ADD CORRECT CHECKS PLS TY
+                return true;
+            }else{
+                return true;
+            }
+        }
+        return false;
     }
 
     handleRightClick(e){
