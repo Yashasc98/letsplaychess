@@ -15,7 +15,8 @@
 }
 
 .tile .piece {
-    height: 100%;
+    height: min(10vh, 10vw);
+    width: min(10vh, 10vw);
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
