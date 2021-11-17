@@ -14,9 +14,17 @@
     color: #f0d9b5;
 }
 
-.piece {
+.tile .piece {
     height: 100%;
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
+}
+
+.tile .piece:hover {
+    cursor: grab;
+}
+
+.tile .piece:active {
+    cursor: grabbing;
 }
