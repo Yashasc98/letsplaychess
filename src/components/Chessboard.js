@@ -7,12 +7,25 @@ class Chessboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
-                        grabbedPiece: null
+                        grabbedPiece: null,
+                        chessboardLeft: null,
+                        chessboardRight: null,
+                        chessBoardTop: null,
+                        chessBoardBottom: null
                     }
         this.grabPiece = this.grabPiece.bind(this);
         this.movePiece = this.movePiece.bind(this);
         this.dropPiece = this.dropPiece.bind(this);
         this.handleRightClick = this.handleRightClick.bind(this);
+    }
+
+    componentDidMount(){
+        this.setState({
+            chessboardLeft: document.getElementById("chessboard").getBoundingClientRect().left + window.pageXOffset,
+            chessboardRight: document.getElementById("chessboard").getBoundingClientRect().right + window.pageXOffset,
+            chessBoardTop: document.getElementById("chessboard").getBoundingClientRect().top + window.pageYOffset,
+            chessBoardBottom: document.getElementById("chessboard").getBoundingClientRect().bottom + window.pageYOffset
+        })
     }
 
     grabPiece(e) {
@@ -32,16 +45,34 @@ class Chessboard extends React.Component {
 
     movePiece(e) {
         if(this.state.grabbedPiece){
-            const mouseX = e.clientX - (e.target.clientWidth/2) + window.pageXOffset;
-            const mouseY = e.clientY - (e.target.clientHeight/2) + window.pageYOffset;
+            const currxCoordinate = e.clientX;
+            const curryCoordinate = e.clientY;
+            const currxOffset = window.pageXOffset;
+            const curryOffset = window.pageYOffset;
+            const pieceWidth = e.target.clientWidth;
+            const pieceHeight = e.target.clientHeight;
+            const mouseX = currxCoordinate - (pieceWidth/2) + window.pageXOffset;
+            const mouseY = curryCoordinate - (pieceHeight/2) + window.pageYOffset;
             const grabbedPiece = this.state.grabbedPiece;
-            grabbedPiece.target.style.left = `${mouseX}px`;
-            grabbedPiece.target.style.top = `${mouseY}px`;
+            if(this.validatePieceInsideChessboard(e, currxCoordinate, curryCoordinate, currxOffset, curryOffset, pieceWidth/4, pieceHeight/4)){
+                grabbedPiece.target.style.left = `${mouseX}px`;
+                grabbedPiece.target.style.top = `${mouseY}px`;
+            }
+            
         }
     }
 
+    validatePieceInsideChessboard(e, currxCoordinate, curryCoordinate, currxOffset, curryOffset, pieceWidth, pieceHeight){
+        if(this.state.chessboardLeft + pieceWidth <= currxCoordinate + currxOffset &&
+        this.state.chessboardRight - pieceWidth >= currxCoordinate + currxOffset &&
+        this.state.chessBoardTop + pieceHeight <= curryCoordinate + curryOffset &&
+        this.state.chessBoardBottom - pieceHeight >= curryCoordinate + curryOffset){
+            return true;
+        }
+        return false;
+    }
+
     dropPiece(e) {
-        // console.log(e);
         if(this.state.grabbedPiece){
             const grabbedPiece = this.state.grabbedPiece;
             grabbedPiece.target.style.position = "static";
@@ -67,7 +98,7 @@ class Chessboard extends React.Component {
                 chessBoard.push(<Tile key={`${j},${i}`} xAxis={j} yAxis={i}></Tile>)
             }
         }
-        return  <div className="chessboard-center"><div onMouseDown={this.grabPiece} onMouseMove={this.movePiece} onMouseUp={this.dropPiece} onContextMenu={this.handleRightClick} id="chessboard">{chessBoard}</div></div>;
+        return  <div id="chessboard-center"><div onMouseDown={this.grabPiece} onMouseMove={this.movePiece} onMouseUp={this.dropPiece} onContextMenu={this.handleRightClick} id="chessboard">{chessBoard}</div></div>;
     }
 }
  

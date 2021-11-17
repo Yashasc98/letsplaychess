@@ -1,4 +1,4 @@
-.chessboard-center{
+#chessboard-center{
     display: grid;
     place-content: center;
     height: 100vh;
