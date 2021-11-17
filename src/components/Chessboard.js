@@ -34,7 +34,6 @@ class Chessboard extends React.Component {
         if(this.state.grabbedPiece){
             const mouseX = e.clientX - (e.target.clientWidth/2) + window.pageXOffset;
             const mouseY = e.clientY - (e.target.clientHeight/2) + window.pageYOffset;
-            console.log(e.target.parentNode.parentNode.clientHeight);
             const grabbedPiece = this.state.grabbedPiece;
             grabbedPiece.target.style.left = `${mouseX}px`;
             grabbedPiece.target.style.top = `${mouseY}px`;
@@ -42,7 +41,12 @@ class Chessboard extends React.Component {
     }
 
     dropPiece(e) {
+        // console.log(e);
         if(this.state.grabbedPiece){
+            const grabbedPiece = this.state.grabbedPiece;
+            grabbedPiece.target.style.position = "static";
+            e.target.parentNode.removeChild(e.target);
+            document.elementFromPoint(e.clientX, e.clientY).appendChild(grabbedPiece.target);
             this.setState({
                 grabbedPiece: null
             })
