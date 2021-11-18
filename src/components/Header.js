@@ -6,8 +6,8 @@ class Header extends Component {
         return (
             <div>
                 <nav className="navbar navbar-expand-lg navbar-dark navbar-custom">
-                    <a href="/"><img className="logo-custom" src="https://www.freepnglogos.com/uploads/chess-png/horse-chess-png-black-23.png" alt="horse chess png black" /></a>
-                    <a className="nav-link navbar-brand-custom" href="/">LetsPlayChess</a>
+                    <a href="/letsplaychess"><img className="logo-custom" src="https://www.freepnglogos.com/uploads/chess-png/horse-chess-png-black-23.png" alt="horse chess png black" /></a>
+                    <a className="nav-link navbar-brand-custom" href="/letsplaychess">LetsPlayChess</a>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
@@ -19,15 +19,15 @@ class Header extends Component {
                                 Username
                                 </a>
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a className="dropdown-item" href="/">Profile</a>
+                                <a className="dropdown-item" href="/letsplaychess">Profile</a>
                                 <div className="dropdown-divider"></div>
-                                <a className="dropdown-item" href="/">Settings</a>
+                                <a className="dropdown-item" href="/letsplaychess">Settings</a>
                                 <div className="dropdown-divider"></div>
-                                <a className="dropdown-item" href="/">Logout</a>
+                                <a className="dropdown-item" href="/letsplaychess">Logout</a>
                                 </div>
                             </li>
                             <li>
-                            <a className="nav-link" href="/play">Play!</a>
+                            <a className="nav-link" href="/letsplaychess/play">Play!</a>
                             </li>
                         </ul>
                     </div>

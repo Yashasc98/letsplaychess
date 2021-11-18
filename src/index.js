@@ -10,7 +10,7 @@ ReactDOM.render(
   <BrowserRouter>
     <Header/>
     <Routes>
-      <Route path="/play" element={<Chessboard />}/>
+      <Route path="letsplaychess/play" element={<Chessboard />}/>
     </Routes>
   </BrowserRouter>,
  document.getElementById('root')
