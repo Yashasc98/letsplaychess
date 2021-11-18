@@ -12,11 +12,12 @@ class Chessboard extends React.Component {
                         chessboardRight: null,
                         chessBoardTop: null,
                         chessBoardBottom: null,
-                        validSquares: null
+                        validSquares: null,
+                        isMobile: null
                     }
         this.grabPiece = this.grabPiece.bind(this);
         this.movePiece = this.movePiece.bind(this);
-        this.dropPiece = this.dropPiece.bind(this);
+        this.dropPiece = this.dropPiece.bind(this); this.dropPieceMobile = this.dropPieceMobile.bind(this);
         this.handleRightClick = this.handleRightClick.bind(this);
     }
 
@@ -25,15 +26,16 @@ class Chessboard extends React.Component {
             chessboardLeft: document.getElementById("chessboard").getBoundingClientRect().left + window.pageXOffset,
             chessboardRight: document.getElementById("chessboard").getBoundingClientRect().right + window.pageXOffset,
             chessBoardTop: document.getElementById("chessboard").getBoundingClientRect().top + window.pageYOffset,
-            chessBoardBottom: document.getElementById("chessboard").getBoundingClientRect().bottom + window.pageYOffset
+            chessBoardBottom: document.getElementById("chessboard").getBoundingClientRect().bottom + window.pageYOffset,
+            isMobile: window.innerWidth <= 768 ? true : false
         })
     }
 
     grabPiece(e) {
-        if(e.button === 0){
+        if(e.button !== 2){
             if(e.target.classList.contains("piece")){
-                const mouseX = e.clientX - (e.target.clientWidth/2) + window.pageXOffset;
-                const mouseY = e.clientY - (e.target.clientHeight/2) + window.pageYOffset;
+                const mouseX = (this.state.isMobile && e._reactName==="onTouchStart" ? e.touches[0].clientX : e.clientX) + (-(e.target.clientWidth/2) + window.pageXOffset);
+                const mouseY = (this.state.isMobile && e._reactName==="onTouchStart" ? e.touches[0].clientY : e.clientY) + (-(e.target.clientHeight/2) + window.pageYOffset);
                 e.target.style.position = "absolute";
                 e.target.style.left = `${mouseX}px`;
                 e.target.style.top = `${mouseY}px`;
@@ -46,7 +48,7 @@ class Chessboard extends React.Component {
     }
 
     getAllValidSquaresForPiece(piece, currentSquare){
-        console.log(piece + " " + currentSquare);
+        // console.log(piece + " " + currentSquare);
 
         let validSquares = []; //FILL THIS CONDITIONALLY WITH IDS OF SQUARES THE PIECE CAN GO TO
 
@@ -74,8 +76,8 @@ class Chessboard extends React.Component {
 
     movePiece(e) {
         if(this.state.grabbedPiece){
-            const currxCoordinate = e.clientX;
-            const curryCoordinate = e.clientY;
+            const currxCoordinate = this.state.isMobile && e._reactName==="onTouchMove" ? e.touches[0].clientX : e.clientX;
+            const curryCoordinate = this.state.isMobile && e._reactName==="onTouchMove" ? e.touches[0].clientY : e.clientY;
             const currxOffset = window.pageXOffset;
             const curryOffset = window.pageYOffset;
             const piece = e.target;
@@ -106,8 +108,35 @@ class Chessboard extends React.Component {
             this.styleToValidSquares(null, null);
             const grabbedPiece = this.state.grabbedPiece;
             grabbedPiece.target.style.position = "static";
-            
-            let destinationSquare = document.elementFromPoint(e.clientX, e.clientY);
+            let destinationSquare = this.state.isMobile && e._reactName==="onTouchEnd" ? document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY) : document.elementFromPoint(e.clientX, e.clientY);
+            let destinationContainsPiece = false;
+            if(destinationSquare.classList.contains("piece")){
+                destinationContainsPiece = true;
+                destinationSquare = destinationSquare.parentNode;
+            }
+
+            if(destinationSquare.firstChild !== e.target && this.validDropSquare(destinationSquare, grabbedPiece)){
+                if(destinationContainsPiece){
+                    destinationSquare.removeChild(destinationSquare.firstChild);
+                    destinationSquare.appendChild(grabbedPiece.target);
+                }else{
+                    e.target.parentNode.removeChild(e.target);
+                    destinationSquare.appendChild(grabbedPiece.target);
+                }
+            }
+
+            this.setState({
+                grabbedPiece: null
+            })
+        }
+    }
+
+    dropPieceMobile(e) {
+        if(this.state.grabbedPiece){
+            this.styleToValidSquares(null, null);
+            const grabbedPiece = this.state.grabbedPiece;
+            grabbedPiece.target.style.position = "static";
+            let destinationSquare = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
             let destinationContainsPiece = false;
             if(destinationSquare.classList.contains("piece")){
                 destinationContainsPiece = true;
@@ -161,7 +190,7 @@ class Chessboard extends React.Component {
                 chessBoard.push(<Tile key={`${j},${i}`} xAxis={j} yAxis={i}></Tile>)
             }
         }
-        return  <div id="chessboard-center"><div onMouseDown={this.grabPiece} onMouseMove={this.movePiece} onMouseUp={this.dropPiece} onContextMenu={this.handleRightClick} id="chessboard">{chessBoard}</div></div>;
+        return  <div id="chessboard-center"><div onMouseDown={this.grabPiece} onTouchStart={this.grabPiece} onMouseMove={this.movePiece} onTouchMove={this.movePiece} onMouseUp={this.dropPiece} onTouchEnd={this.dropPiece} onContextMenu={this.handleRightClick} id="chessboard">{chessBoard}</div></div>;
     }
 }
  
