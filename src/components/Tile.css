@@ -34,3 +34,7 @@
     border-radius: 50%;
     border: 5px solid green;
 }
+
+.validSquare {
+    border: 5px solid orange;
+}

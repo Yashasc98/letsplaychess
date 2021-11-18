@@ -11,20 +11,20 @@ class Tile extends React.Component {
     render() {
         if(positionPieceMap[`${this.props.xAxis}${this.props.yAxis}`] !== undefined){
             if((this.props.xAxis + this.props.yAxis) % 2 === 0){
-                return <div id={`${this.props.xAxis}${this.props.yAxis}`} className="tile light-tile">
+                return <div id={`${1+this.props.xAxis}${8-this.props.yAxis}`} className="tile light-tile">
                     <div className="piece" style={{backgroundImage: `url('${process.env.PUBLIC_URL}/assets/pieces/${positionPieceMap[`${this.props.xAxis}${this.props.yAxis}`]}')`}}></div>
                 </div>;
             }else {
-                return <div id={`${this.props.xAxis}${this.props.yAxis}`} className="tile dark-tile">
+                return <div id={`${1+this.props.xAxis}${8-this.props.yAxis}`} className="tile dark-tile">
                     <div className="piece" style={{backgroundImage: `url('${process.env.PUBLIC_URL}/assets/pieces/${positionPieceMap[`${this.props.xAxis}${this.props.yAxis}`]}')`}}></div>
                 </div>;
             }
         }
         else{
             if((this.props.xAxis + this.props.yAxis) % 2 === 0){
-                return <div id={`${this.props.xAxis}${this.props.yAxis}`} className="tile light-tile"></div>;
+                return <div id={`${1+this.props.xAxis}${8-this.props.yAxis}`} className="tile light-tile"></div>;
             }else {
-                return <div id={`${this.props.xAxis}${this.props.yAxis}`} className="tile dark-tile"></div>;
+                return <div id={`${1+this.props.xAxis}${8-this.props.yAxis}`} className="tile dark-tile"></div>;
             }
         }
     }

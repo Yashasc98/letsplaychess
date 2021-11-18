@@ -11,7 +11,8 @@ class Chessboard extends React.Component {
                         chessboardLeft: null,
                         chessboardRight: null,
                         chessBoardTop: null,
-                        chessBoardBottom: null
+                        chessBoardBottom: null,
+                        validSquares: null
                     }
         this.grabPiece = this.grabPiece.bind(this);
         this.movePiece = this.movePiece.bind(this);
@@ -36,10 +37,38 @@ class Chessboard extends React.Component {
                 e.target.style.position = "absolute";
                 e.target.style.left = `${mouseX}px`;
                 e.target.style.top = `${mouseY}px`;
+                this.getAllValidSquaresForPiece(this.getPieceTypeAndColour(e.target)[0], e.target.parentNode.id)
                 this.setState({
-                    grabbedPiece: e
+                    grabbedPiece: e,
                 })
             }
+        }
+    }
+
+    getAllValidSquaresForPiece(piece, currentSquare){
+        console.log(piece + " " + currentSquare);
+
+        let validSquares = []; //FILL THIS CONDITIONALLY WITH IDS OF SQUARES THE PIECE CAN GO TO
+
+        this.styleToValidSquares(validSquares, 1);
+        this.setState({
+            validSquares
+        })
+        return validSquares;
+    }
+
+    styleToValidSquares(validSquares, styleFlag){
+        if(styleFlag){
+            for(let i=0; i<validSquares.length; i++){
+                document.getElementById(validSquares[i]).classList.add("validSquare");
+            }
+        }else{
+            for(let i=0; i<this.state.validSquares.length; i++){
+                document.getElementById(this.state.validSquares[i]).classList.remove("validSquare");
+            }
+            this.setState({
+                validSquares: null
+            })
         }
     }
 
@@ -74,6 +103,7 @@ class Chessboard extends React.Component {
 
     dropPiece(e) {
         if(this.state.grabbedPiece){
+            this.styleToValidSquares(null, null);
             const grabbedPiece = this.state.grabbedPiece;
             grabbedPiece.target.style.position = "static";
             
