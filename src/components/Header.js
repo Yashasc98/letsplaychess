@@ -6,7 +6,7 @@ class Header extends Component {
         return (
             <div>
                 <nav className="navbar navbar-expand-lg navbar-dark navbar-custom">
-                    <a href="/letsplaychess"><img className="logo-custom" src="https://www.freepnglogos.com/uploads/chess-png/horse-chess-png-black-23.png" alt="horse chess png black" /></a>
+                    <a href="/"><img className="logo-custom" src={process.env.PUBLIC_URL+"/assets/pieces/knight_b.png"} alt="knight black" /></a>
                     <a className="nav-link navbar-brand-custom" href="/letsplaychess">LetsPlayChess</a>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>

@@ -9,6 +9,7 @@ import Header from './components/Header';
 ReactDOM.render(
   <BrowserRouter>
     <Header/>
+    <Chessboard />
     <Routes>
       <Route path="letsplaychess/play" element={<Chessboard />}/>
     </Routes>
