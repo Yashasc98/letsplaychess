@@ -17,7 +17,7 @@ class Chessboard extends React.Component {
                     }
         this.grabPiece = this.grabPiece.bind(this);
         this.movePiece = this.movePiece.bind(this);
-        this.dropPiece = this.dropPiece.bind(this); this.dropPieceMobile = this.dropPieceMobile.bind(this);
+        this.dropPiece = this.dropPiece.bind(this);
         this.handleRightClick = this.handleRightClick.bind(this);
     }
 
@@ -34,9 +34,12 @@ class Chessboard extends React.Component {
     grabPiece(e) {
         if(e.button !== 2){
             if(e.target.classList.contains("piece")){
+                if(this.state.isMobile && e._reactName==="onTouchStart"){
+                    document.body.classList.add("disableScroll"); //Disables scrolling for mobile only
+                }
                 const mouseX = (this.state.isMobile && e._reactName==="onTouchStart" ? e.touches[0].clientX : e.clientX) + (-(e.target.clientWidth/2) + window.pageXOffset);
                 const mouseY = (this.state.isMobile && e._reactName==="onTouchStart" ? e.touches[0].clientY : e.clientY) + (-(e.target.clientHeight/2) + window.pageYOffset);
-                e.target.style.position = "absolute";
+                e.target.classList.add("movingPiece");
                 e.target.style.left = `${mouseX}px`;
                 e.target.style.top = `${mouseY}px`;
                 this.getAllValidSquaresForPiece(this.getPieceTypeAndColour(e.target)[0], e.target.parentNode.id)
@@ -78,17 +81,10 @@ class Chessboard extends React.Component {
         if(this.state.grabbedPiece){
             const currxCoordinate = this.state.isMobile && e._reactName==="onTouchMove" ? e.touches[0].clientX : e.clientX;
             const curryCoordinate = this.state.isMobile && e._reactName==="onTouchMove" ? e.touches[0].clientY : e.clientY;
-            const currxOffset = window.pageXOffset;
-            const curryOffset = window.pageYOffset;
-            const piece = e.target;
-            const pieceWidth = piece.clientWidth;
-            const pieceHeight = piece.clientHeight;
-            const mouseX = currxCoordinate - (pieceWidth/2) + window.pageXOffset;
-            const mouseY = curryCoordinate - (pieceHeight/2) + window.pageYOffset;
             const grabbedPiece = this.state.grabbedPiece;
-            if(this.validatePieceInsideChessboard(e, currxCoordinate, curryCoordinate, currxOffset, curryOffset, pieceWidth/4, pieceHeight/4)){
-                grabbedPiece.target.style.left = `${mouseX}px`;
-                grabbedPiece.target.style.top = `${mouseY}px`;
+            if(this.validatePieceInsideChessboard(e, currxCoordinate, curryCoordinate, window.pageXOffset, window.pageYOffset, e.target.clientWidth/4, e.target.clientHeight/4)){
+                grabbedPiece.target.style.left = `${currxCoordinate - (e.target.clientWidth/2) + window.pageXOffset}px`;
+                grabbedPiece.target.style.top = `${curryCoordinate - (e.target.clientHeight/2) + window.pageYOffset}px`;
             }
         }
     }
@@ -105,16 +101,18 @@ class Chessboard extends React.Component {
 
     dropPiece(e) {
         if(this.state.grabbedPiece){
+            if(this.state.isMobile && e._reactName==="onTouchEnd"){
+                document.body.classList.remove("disableScroll"); //Enables scrolling for mobile
+            }
             this.styleToValidSquares(null, null);
             const grabbedPiece = this.state.grabbedPiece;
-            grabbedPiece.target.style.position = "static";
+            grabbedPiece.target.classList.remove("movingPiece");
             let destinationSquare = this.state.isMobile && e._reactName==="onTouchEnd" ? document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY) : document.elementFromPoint(e.clientX, e.clientY);
             let destinationContainsPiece = false;
             if(destinationSquare.classList.contains("piece")){
                 destinationContainsPiece = true;
                 destinationSquare = destinationSquare.parentNode;
             }
-
             if(destinationSquare.firstChild !== e.target && this.validDropSquare(destinationSquare, grabbedPiece)){
                 if(destinationContainsPiece){
                     destinationSquare.removeChild(destinationSquare.firstChild);
@@ -124,35 +122,6 @@ class Chessboard extends React.Component {
                     destinationSquare.appendChild(grabbedPiece.target);
                 }
             }
-
-            this.setState({
-                grabbedPiece: null
-            })
-        }
-    }
-
-    dropPieceMobile(e) {
-        if(this.state.grabbedPiece){
-            this.styleToValidSquares(null, null);
-            const grabbedPiece = this.state.grabbedPiece;
-            grabbedPiece.target.style.position = "static";
-            let destinationSquare = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-            let destinationContainsPiece = false;
-            if(destinationSquare.classList.contains("piece")){
-                destinationContainsPiece = true;
-                destinationSquare = destinationSquare.parentNode;
-            }
-
-            if(destinationSquare.firstChild !== e.target && this.validDropSquare(destinationSquare, grabbedPiece)){
-                if(destinationContainsPiece){
-                    destinationSquare.removeChild(destinationSquare.firstChild);
-                    destinationSquare.appendChild(grabbedPiece.target);
-                }else{
-                    e.target.parentNode.removeChild(e.target);
-                    destinationSquare.appendChild(grabbedPiece.target);
-                }
-            }
-
             this.setState({
                 grabbedPiece: null
             })
@@ -160,6 +129,9 @@ class Chessboard extends React.Component {
     }
 
     validDropSquare(destinationSquare, grabbedPiece) {
+        if(!destinationSquare.classList.contains("tile")){
+            return false;
+        }
         if(destinationSquare.firstChild && destinationSquare.firstChild.classList.contains("piece")){
             if(this.getPieceTypeAndColour(destinationSquare.firstChild)[1] === this.getPieceTypeAndColour(grabbedPiece.target)[1]){
                 return false;
@@ -190,7 +162,7 @@ class Chessboard extends React.Component {
                 chessBoard.push(<Tile key={`${j},${i}`} xAxis={j} yAxis={i}></Tile>)
             }
         }
-        return  <div id="chessboard-center"><div onMouseDown={this.grabPiece} onTouchStart={this.grabPiece} onMouseMove={this.movePiece} onTouchMove={this.movePiece} onMouseUp={this.dropPiece} onTouchEnd={this.dropPiece} onContextMenu={this.handleRightClick} id="chessboard">{chessBoard}</div></div>;
+        return  <div onMouseUp={this.dropPiece} id="chessboard-center"><div onMouseDown={this.grabPiece} onTouchStart={this.grabPiece} onMouseMove={this.movePiece} onTouchMove={this.movePiece}  onTouchEnd={this.dropPiece} onContextMenu={this.handleRightClick} id="chessboard">{chessBoard}</div></div>;
     }
 }
  

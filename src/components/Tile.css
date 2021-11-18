@@ -38,3 +38,7 @@
 .validSquare {
     border: 5px solid orange;
 }
+
+.movingPiece {
+    position: absolute;
+}
