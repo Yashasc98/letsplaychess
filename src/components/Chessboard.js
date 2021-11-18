@@ -49,8 +49,9 @@ class Chessboard extends React.Component {
             const curryCoordinate = e.clientY;
             const currxOffset = window.pageXOffset;
             const curryOffset = window.pageYOffset;
-            const pieceWidth = e.target.clientWidth;
-            const pieceHeight = e.target.clientHeight;
+            const piece = e.target;
+            const pieceWidth = piece.clientWidth;
+            const pieceHeight = piece.clientHeight;
             const mouseX = currxCoordinate - (pieceWidth/2) + window.pageXOffset;
             const mouseY = curryCoordinate - (pieceHeight/2) + window.pageYOffset;
             const grabbedPiece = this.state.grabbedPiece;
@@ -58,7 +59,6 @@ class Chessboard extends React.Component {
                 grabbedPiece.target.style.left = `${mouseX}px`;
                 grabbedPiece.target.style.top = `${mouseY}px`;
             }
-            
         }
     }
 
@@ -84,7 +84,7 @@ class Chessboard extends React.Component {
                 destinationSquare = destinationSquare.parentNode;
             }
 
-            if(destinationSquare !== e.target && this.validDropSquare(destinationSquare)){
+            if(destinationSquare.firstChild !== e.target && this.validDropSquare(destinationSquare, grabbedPiece)){
                 if(destinationContainsPiece){
                     destinationSquare.removeChild(destinationSquare.firstChild);
                     destinationSquare.appendChild(grabbedPiece.target);
@@ -100,23 +100,28 @@ class Chessboard extends React.Component {
         }
     }
 
-    validDropSquare(destinationSquare) {
-        if(destinationSquare.classList.contains("tile")){
-            if(destinationSquare.firstChild && destinationSquare.firstChild.classList.contains("piece")){
-                console.log(destinationSquare.firstChild); //ADD CORRECT CHECKS PLS TY
-                return true;
-            }else{
-                return true;
+    validDropSquare(destinationSquare, grabbedPiece) {
+        if(destinationSquare.firstChild && destinationSquare.firstChild.classList.contains("piece")){
+            if(this.getPieceTypeAndColour(destinationSquare.firstChild)[1] === this.getPieceTypeAndColour(grabbedPiece.target)[1]){
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     handleRightClick(e){
         e.preventDefault();
         if(e.target.classList.contains("piece")){
-            e.target.parentNode.removeChild(e.target);
+            if(!e.target.classList.contains("selected")){
+                e.target.classList.add("selected");
+            }else {
+                e.target.classList.remove("selected");
+            }
         }
+    }
+
+    getPieceTypeAndColour(piece){
+        return piece.style.backgroundImage.split(".")[0].split("/").pop().split("_");
     }
 
     render() { 

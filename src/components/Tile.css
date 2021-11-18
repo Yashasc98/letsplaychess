@@ -29,3 +29,8 @@
 .tile .piece:active {
     cursor: grabbing;
 }
+
+.selected {
+    border-radius: 50%;
+    border: 5px solid green;
+}
