@@ -15,3 +15,35 @@ code {
 .disableScroll {
   overflow: hidden;
 }
+
+@media (max-width: 480px) {
+  html { 
+    overflow: hidden; 
+  } 
+  body { 
+    height:100%;
+    position:fixed; 
+    overflow-y:scroll; 
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #555;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #111;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}

@@ -35,12 +35,10 @@ class Chessboard extends React.Component {
     grabPiece(e) {
         if(e.button !== 2){
             if(e.target.classList.contains("piece")){
-                if(this.state.isMobile && e._reactName==="onTouchStart"){
-                    document.body.classList.add("disableScroll"); //Disables scrolling for mobile only
-                }
                 if(this.getPieceTypeAndColour(e.target)[1] !== this.state.colourToMove){
                     return;
                 }
+                document.body.classList.add("disableScroll"); //Disables scrolling
                 const mouseX = (this.state.isMobile && e._reactName==="onTouchStart" ? e.touches[0].clientX : e.clientX) + (-(e.target.clientWidth/2) + window.pageXOffset);
                 const mouseY = (this.state.isMobile && e._reactName==="onTouchStart" ? e.touches[0].clientY : e.clientY) + (-(e.target.clientHeight/2) + window.pageYOffset);
                 e.target.classList.add("movingPiece");
@@ -368,9 +366,7 @@ class Chessboard extends React.Component {
 
     dropPiece(e) {
         if(this.state.grabbedPiece){
-            if(this.state.isMobile && e._reactName==="onTouchEnd"){
-                document.body.classList.remove("disableScroll"); //Enables scrolling for mobile
-            }
+            document.body.classList.remove("disableScroll"); //Enables scrolling
             this.styleToValidSquares(null, null);
             const grabbedPiece = this.state.grabbedPiece;
             grabbedPiece.target.classList.remove("movingPiece");

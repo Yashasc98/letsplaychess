@@ -42,3 +42,14 @@
 .movingPiece {
     position: absolute;
 }
+
+@media (max-width: 480px) {
+    .tile {
+        height: min(12.5vh, 12.5vw);
+        width: min(12.5vh, 12.5vw);
+    }
+    .tile .piece {
+        height: min(12.5vh, 12.5vw);
+        width: min(12.5vh, 12.5vw);
+    }
+  }
