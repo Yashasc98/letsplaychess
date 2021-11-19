@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/letsplaychess/static/css/main.dada66ed.chunk.css",
-    "main.js": "/letsplaychess/static/js/main.2a6714e3.chunk.js",
-    "main.js.map": "/letsplaychess/static/js/main.2a6714e3.chunk.js.map",
+    "main.js": "/letsplaychess/static/js/main.d2261ac7.chunk.js",
+    "main.js.map": "/letsplaychess/static/js/main.d2261ac7.chunk.js.map",
     "runtime-main.js": "/letsplaychess/static/js/runtime-main.b52adb60.js",
     "runtime-main.js.map": "/letsplaychess/static/js/runtime-main.b52adb60.js.map",
     "static/js/2.69726cd4.chunk.js": "/letsplaychess/static/js/2.69726cd4.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.b52adb60.js",
     "static/js/2.69726cd4.chunk.js",
     "static/css/main.dada66ed.chunk.css",
-    "static/js/main.2a6714e3.chunk.js"
+    "static/js/main.d2261ac7.chunk.js"
   ]
 }
