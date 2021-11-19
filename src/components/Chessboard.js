@@ -255,6 +255,21 @@ class Chessboard extends React.Component {
 
         if(piece === "king"){
             let tempKingSquare = parseInt(currentSquare);
+            if(colour === "w"){ //Castling logic hardcoded by tile ID
+                if(tempKingSquare === 51 && !document.getElementById(61).firstChild && !document.getElementById(71).firstChild && document.getElementById(81).firstChild && this.getPieceTypeAndColour(document.getElementById(81).firstChild)[0] === "rook" && !this.isKingInCheck(51) && !this.isKingInCheck(61) && !this.isKingInCheck(71)){
+                    validSquares.push("71");
+                }
+                if(tempKingSquare === 51 && !document.getElementById(41).firstChild && !document.getElementById(31).firstChild && !document.getElementById(21).firstChild && document.getElementById(81).firstChild && this.getPieceTypeAndColour(document.getElementById(11).firstChild)[0] === "rook" && !this.isKingInCheck(51) && !this.isKingInCheck(41) && !this.isKingInCheck(31)){
+                    validSquares.push("31");
+                }
+            }else if(colour === "b"){
+                if(tempKingSquare === 58 && !document.getElementById(68).firstChild && !document.getElementById(78).firstChild && document.getElementById(88).firstChild && this.getPieceTypeAndColour(document.getElementById(88).firstChild)[0] === "rook" && !this.isKingInCheck(58) && !this.isKingInCheck(68) && !this.isKingInCheck(78)){
+                    validSquares.push("78");
+                }
+                if(tempKingSquare === 58 && !document.getElementById(48).firstChild && !document.getElementById(38).firstChild && !document.getElementById(28).firstChild && document.getElementById(18).firstChild && this.getPieceTypeAndColour(document.getElementById(88).firstChild)[0] === "rook" && !this.isKingInCheck(58) && !this.isKingInCheck(48) && !this.isKingInCheck(38)){
+                    validSquares.push("38");
+                }
+            }
             if(this.isThisIdValidOnChessBoard(tempKingSquare + 1, colour)){
                 validSquares.push((tempKingSquare + 1).toString());
             }
@@ -325,6 +340,10 @@ class Chessboard extends React.Component {
         return true;
     }
 
+    isKingInCheck(kingSquareId){
+        return false;
+    }
+
     movePiece(e) {
         if(this.state.grabbedPiece){
             const currxCoordinate = this.state.isMobile && e._reactName==="onTouchMove" ? e.touches[0].clientX : e.clientX;
@@ -367,14 +386,23 @@ class Chessboard extends React.Component {
                     destinationSquare.removeChild(destinationSquare.firstChild);
                     destinationSquare.appendChild(grabbedPiece.target);
                 }else{
+                    if(this.getPieceTypeAndColour(grabbedPiece.target)[0] === "king"){
+                        if(destinationSquare.id - e.target.parentNode.id === 20){
+                            const rook = document.getElementById((parseInt(e.target.parentNode.id) + 30).toString()).firstChild;
+                            rook.parentNode.removeChild(rook);
+                            document.getElementById((parseInt(e.target.parentNode.id) + 10).toString()).appendChild(rook);
+                        }else if(destinationSquare.id - e.target.parentNode.id === -20){
+                            const rook = document.getElementById((parseInt(e.target.parentNode.id) - 40).toString()).firstChild;
+                            rook.parentNode.removeChild(rook);
+                            document.getElementById((parseInt(e.target.parentNode.id) - 10).toString()).appendChild(rook);
+                        }
+                    }
                     e.target.parentNode.removeChild(e.target);
                     destinationSquare.appendChild(grabbedPiece.target);
                 }
             }else{
                 backToOriginalPosition = true;
             }
-            console.log(grabbedPiece.target.parentNode.id);
-            console.log(destinationSquare.id);
             this.setState({
                 grabbedPiece: null,
                 validSquares: null,
