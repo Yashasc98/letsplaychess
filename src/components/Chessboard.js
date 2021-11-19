@@ -13,7 +13,8 @@ class Chessboard extends React.Component {
                         chessBoardTop: null,
                         chessBoardBottom: null,
                         validSquares: null,
-                        isMobile: null
+                        isMobile: null,
+                        colourToMove: "w"
                     }
         this.grabPiece = this.grabPiece.bind(this);
         this.movePiece = this.movePiece.bind(this);
@@ -37,12 +38,15 @@ class Chessboard extends React.Component {
                 if(this.state.isMobile && e._reactName==="onTouchStart"){
                     document.body.classList.add("disableScroll"); //Disables scrolling for mobile only
                 }
+                if(this.getPieceTypeAndColour(e.target)[1] !== this.state.colourToMove){
+                    return;
+                }
                 const mouseX = (this.state.isMobile && e._reactName==="onTouchStart" ? e.touches[0].clientX : e.clientX) + (-(e.target.clientWidth/2) + window.pageXOffset);
                 const mouseY = (this.state.isMobile && e._reactName==="onTouchStart" ? e.touches[0].clientY : e.clientY) + (-(e.target.clientHeight/2) + window.pageYOffset);
                 e.target.classList.add("movingPiece");
                 e.target.style.left = `${mouseX}px`;
                 e.target.style.top = `${mouseY}px`;
-                this.getAllValidSquaresForPiece(this.getPieceTypeAndColour(e.target)[0], e.target.parentNode.id)
+                this.getAllValidSquaresForPiece(this.getPieceTypeAndColour(e.target)[0], e.target.parentNode.id, this.getPieceTypeAndColour(e.target)[1])
                 this.setState({
                     grabbedPiece: e,
                 })
@@ -50,31 +54,275 @@ class Chessboard extends React.Component {
         }
     }
 
-    getAllValidSquaresForPiece(piece, currentSquare){
-        // console.log(piece + " " + currentSquare);
+    getAllValidSquaresForPiece(piece, currentSquare, colour){
+        let validSquares = [];
 
-        let validSquares = []; //FILL THIS CONDITIONALLY WITH IDS OF SQUARES THE PIECE CAN GO TO
+        if(piece === "pawn"){
+            currentSquare = parseInt(currentSquare);
+            if(colour === "b"){
+                if(this.isThisIdValidOnChessBoard(currentSquare - 1, colour) && !(document.getElementById(currentSquare - 1).firstChild)){
+                    validSquares.push((currentSquare - 1).toString());
+                }
+                if(this.isThisIdValidOnChessBoard(currentSquare - 11, colour) && (document.getElementById(currentSquare - 11).firstChild)){
+                    validSquares.push((currentSquare - 11).toString());
+                }
+                if(this.isThisIdValidOnChessBoard(currentSquare + 9, colour) && (document.getElementById(currentSquare + 9).firstChild)){
+                    validSquares.push((currentSquare + 9).toString());
+                }
+                if(currentSquare % 10 === 7 && this.isThisIdValidOnChessBoard(currentSquare - 2, colour)){
+                    validSquares.push((currentSquare - 2).toString());
+                }
+            }else if (colour === "w"){
+                if(this.isThisIdValidOnChessBoard(currentSquare + 1, colour) && !(document.getElementById(currentSquare + 1).firstChild)){
+                    validSquares.push((currentSquare + 1).toString());
+                }
+                if(this.isThisIdValidOnChessBoard(currentSquare + 11, colour) && (document.getElementById(currentSquare + 11).firstChild)){
+                    validSquares.push((currentSquare + 11).toString());
+                }
+                if(this.isThisIdValidOnChessBoard(currentSquare - 9, colour) && (document.getElementById(currentSquare - 9).firstChild)){
+                    validSquares.push((currentSquare - 9).toString());
+                }
+                if(currentSquare % 10 === 2 && this.isThisIdValidOnChessBoard(currentSquare + 2, colour)){
+                    validSquares.push((currentSquare + 2).toString());
+                }
+            }
+        }
+
+        if(piece === "knight"){
+            let tempKnightSquare = parseInt(currentSquare);
+            if(this.isThisIdValidOnChessBoard(tempKnightSquare + 12, colour)){
+                validSquares.push((tempKnightSquare + 12).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKnightSquare - 12, colour)){
+                validSquares.push((tempKnightSquare - 12).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKnightSquare + 8, colour)){
+                validSquares.push((tempKnightSquare + 8).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKnightSquare - 8, colour)){
+                validSquares.push((tempKnightSquare - 8).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKnightSquare + 21, colour)){
+                validSquares.push((tempKnightSquare + 21).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKnightSquare - 21, colour)){
+                validSquares.push((tempKnightSquare - 21).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKnightSquare + 19, colour)){
+                validSquares.push((tempKnightSquare + 19).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKnightSquare - 19, colour)){
+                validSquares.push((tempKnightSquare - 19).toString());
+            }
+        }
+
+        if(piece === "bishop"){
+            let tempBishopSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempBishopSquare + 11, colour)){
+                validSquares.push((tempBishopSquare + 11).toString());
+                if(document.getElementById((tempBishopSquare + 11).toString()).firstChild){
+                    break;
+                }
+                tempBishopSquare = tempBishopSquare + 11;
+            }
+            tempBishopSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempBishopSquare - 11, colour)){
+                validSquares.push((tempBishopSquare - 11).toString());
+                if(document.getElementById((tempBishopSquare - 11).toString()).firstChild){
+                    break;
+                }
+                tempBishopSquare = tempBishopSquare - 11;
+            }
+            tempBishopSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempBishopSquare - 9, colour)){
+                validSquares.push((tempBishopSquare - 9).toString());
+                if(document.getElementById((tempBishopSquare - 9).toString()).firstChild){
+                    break;
+                }
+                tempBishopSquare = tempBishopSquare - 9;
+            }
+            tempBishopSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempBishopSquare + 9, colour)){
+                validSquares.push((tempBishopSquare + 9).toString());
+                if(document.getElementById((tempBishopSquare + 9).toString()).firstChild){
+                    break;
+                }
+                tempBishopSquare = tempBishopSquare + 9;
+            }
+        }
+
+        if(piece === "rook"){
+            let tempRookSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempRookSquare + 1, colour)){
+                validSquares.push((tempRookSquare + 1).toString());
+                if(document.getElementById((tempRookSquare + 1).toString()).firstChild){
+                    break;
+                }
+                tempRookSquare = tempRookSquare + 1;
+            }
+            tempRookSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempRookSquare - 1, colour)){
+                validSquares.push((tempRookSquare - 1).toString());
+                if(document.getElementById((tempRookSquare - 1).toString()).firstChild){
+                    break;
+                }
+                tempRookSquare = tempRookSquare - 1;
+            }
+            tempRookSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempRookSquare + 10, colour)){
+                validSquares.push((tempRookSquare + 10).toString());
+                if(document.getElementById((tempRookSquare + 10).toString()).firstChild){
+                    break;
+                }
+                tempRookSquare = tempRookSquare + 10;
+            }
+            tempRookSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempRookSquare - 10, colour)){
+                validSquares.push((tempRookSquare - 10).toString());
+                if(document.getElementById((tempRookSquare - 10).toString()).firstChild){
+                    break;
+                }
+                tempRookSquare = tempRookSquare - 10;
+            }
+        }
+
+        if(piece === "queen"){
+            let tempQueenSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempQueenSquare + 1, colour)){
+                validSquares.push((tempQueenSquare + 1).toString());
+                if(document.getElementById((tempQueenSquare + 1).toString()).firstChild){
+                    break;
+                }
+                tempQueenSquare = tempQueenSquare + 1;
+            }
+            tempQueenSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempQueenSquare - 1, colour)){
+                validSquares.push((tempQueenSquare - 1).toString());
+                if(document.getElementById((tempQueenSquare - 1).toString()).firstChild){
+                    break;
+                }
+                tempQueenSquare = tempQueenSquare - 1;
+            }
+            tempQueenSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempQueenSquare + 10, colour)){
+                validSquares.push((tempQueenSquare + 10).toString());
+                if(document.getElementById((tempQueenSquare + 10).toString()).firstChild){
+                    break;
+                }
+                tempQueenSquare = tempQueenSquare + 10;
+            }
+            tempQueenSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempQueenSquare - 10, colour)){
+                validSquares.push((tempQueenSquare - 10).toString());
+                if(document.getElementById((tempQueenSquare - 10).toString()).firstChild){
+                    break;
+                }
+                tempQueenSquare = tempQueenSquare - 10;
+            }
+            tempQueenSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempQueenSquare + 11, colour)){
+                validSquares.push((tempQueenSquare + 11).toString());
+                if(document.getElementById((tempQueenSquare + 11).toString()).firstChild){
+                    break;
+                }
+                tempQueenSquare = tempQueenSquare + 11;
+            }
+            tempQueenSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempQueenSquare - 11, colour)){
+                validSquares.push((tempQueenSquare - 11).toString());
+                if(document.getElementById((tempQueenSquare - 11).toString()).firstChild){
+                    break;
+                }
+                tempQueenSquare = tempQueenSquare - 11;
+            }
+            tempQueenSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempQueenSquare - 9, colour)){
+                validSquares.push((tempQueenSquare - 9).toString());
+                if(document.getElementById((tempQueenSquare - 9).toString()).firstChild){
+                    break;
+                }
+                tempQueenSquare = tempQueenSquare - 9;
+            }
+            tempQueenSquare = parseInt(currentSquare);
+            while(this.isThisIdValidOnChessBoard(tempQueenSquare + 9, colour)){
+                validSquares.push((tempQueenSquare + 9).toString());
+                if(document.getElementById((tempQueenSquare + 9).toString()).firstChild){
+                    break;
+                }
+                tempQueenSquare = tempQueenSquare + 9;
+            }
+        }
+
+        if(piece === "king"){
+            let tempKingSquare = parseInt(currentSquare);
+            if(this.isThisIdValidOnChessBoard(tempKingSquare + 1, colour)){
+                validSquares.push((tempKingSquare + 1).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKingSquare - 1, colour)){
+                validSquares.push((tempKingSquare - 1).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKingSquare + 10, colour)){
+                validSquares.push((tempKingSquare + 10).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKingSquare - 10, colour)){
+                validSquares.push((tempKingSquare - 10).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKingSquare + 11, colour)){
+                validSquares.push((tempKingSquare + 11).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKingSquare - 11, colour)){
+                validSquares.push((tempKingSquare - 11).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKingSquare + 9, colour)){
+                validSquares.push((tempKingSquare + 9).toString());
+            }
+            if(this.isThisIdValidOnChessBoard(tempKingSquare - 9, colour)){
+                validSquares.push((tempKingSquare - 9).toString());
+            }
+        }
 
         this.styleToValidSquares(validSquares, 1);
         this.setState({
             validSquares
         })
-        return validSquares;
+        return 0;
     }
 
     styleToValidSquares(validSquares, styleFlag){
         if(styleFlag){
             for(let i=0; i<validSquares.length; i++){
-                document.getElementById(validSquares[i]).classList.add("validSquare");
+                if(document.getElementById(validSquares[i]).firstChild){
+                    document.getElementById(validSquares[i]).firstChild.classList.add("validSquare");
+                }else {
+                    document.getElementById(validSquares[i]).classList.add("validSquare");
+                }
             }
         }else{
             for(let i=0; i<this.state.validSquares.length; i++){
-                document.getElementById(this.state.validSquares[i]).classList.remove("validSquare");
+                if(document.getElementById(this.state.validSquares[i]).firstChild){
+                    document.getElementById(this.state.validSquares[i]).firstChild.classList.remove("validSquare");
+                }else {
+                    document.getElementById(this.state.validSquares[i]).classList.remove("validSquare");
+                }
             }
-            this.setState({
-                validSquares: null
-            })
         }
+    }
+
+    isThisIdValidOnChessBoard(destinationId, currentPieceColour){
+        if(destinationId < 11 || destinationId > 88){
+            return false;
+        }
+        const firstDigit = destinationId % 10;
+        const secondDigit = (destinationId - firstDigit) / 10;
+        if(!(firstDigit >= 1 && firstDigit <= 8 && secondDigit >= 1 && secondDigit <= 8)){
+            return false;
+        }
+        if(document.getElementById(destinationId).firstChild && document.getElementById(destinationId).firstChild.classList.contains("piece")){
+            if(currentPieceColour === this.getPieceTypeAndColour(document.getElementById(destinationId).firstChild)[1]){
+                return false;
+            }
+        }
+        return true;
     }
 
     movePiece(e) {
@@ -113,7 +361,8 @@ class Chessboard extends React.Component {
                 destinationContainsPiece = true;
                 destinationSquare = destinationSquare.parentNode;
             }
-            if(destinationSquare.firstChild !== e.target && this.validDropSquare(destinationSquare, grabbedPiece)){
+            let backToOriginalPosition = false;
+            if(this.validDropSquare(destinationSquare, grabbedPiece)){
                 if(destinationContainsPiece){
                     destinationSquare.removeChild(destinationSquare.firstChild);
                     destinationSquare.appendChild(grabbedPiece.target);
@@ -121,10 +370,20 @@ class Chessboard extends React.Component {
                     e.target.parentNode.removeChild(e.target);
                     destinationSquare.appendChild(grabbedPiece.target);
                 }
+            }else{
+                backToOriginalPosition = true;
             }
+            console.log(grabbedPiece.target.parentNode.id);
+            console.log(destinationSquare.id);
             this.setState({
-                grabbedPiece: null
+                grabbedPiece: null,
+                validSquares: null,
             })
+            if(!backToOriginalPosition){
+                this.setState({
+                    colourToMove: this.state.colourToMove === "w" ? "b" : "w"
+                })
+            }
         }
     }
 
@@ -132,10 +391,8 @@ class Chessboard extends React.Component {
         if(!destinationSquare.classList.contains("tile")){
             return false;
         }
-        if(destinationSquare.firstChild && destinationSquare.firstChild.classList.contains("piece")){
-            if(this.getPieceTypeAndColour(destinationSquare.firstChild)[1] === this.getPieceTypeAndColour(grabbedPiece.target)[1]){
-                return false;
-            }
+        if(!this.state.validSquares.includes(destinationSquare.id)){
+            return false;
         }
         return true;
     }

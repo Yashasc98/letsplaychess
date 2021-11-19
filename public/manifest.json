@@ -2,7 +2,7 @@
   "short_name": "LetsPlayChess",
   "name": "LetsPlayChess",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "theme_color": "#000000",
   "background_color": "#ffffff"
 }
